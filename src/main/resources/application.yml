@@ -1,0 +1,15 @@
+spring:
+  r2dbc:
+    url: r2dbc:pool:mysql://localhost:3306/1234
+    username: root
+    password: root
+    
+  application:
+    name: zero_to_hero_reactive_web
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
