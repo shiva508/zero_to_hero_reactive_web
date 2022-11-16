@@ -1,5 +1,6 @@
 package com.pool.service;
 
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.pool.entity.UserProfile;
@@ -12,7 +13,7 @@ import reactor.core.publisher.Mono;
 @Service
 @AllArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
-	
+
 	private final UserProfileRepository userProfileRepository;
 
 	@Override
@@ -22,7 +23,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Override
 	public Mono<UserProfile> update(UserProfile userProfile) {
-		
+
 		return userProfileRepository.save(userProfile);
 	}
 
@@ -34,6 +35,12 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	public Flux<UserProfile> all() {
 		return userProfileRepository.findAll();
+	}
+
+	@Override
+	public Mono<Resource> downloadFile() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

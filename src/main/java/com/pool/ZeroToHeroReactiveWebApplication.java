@@ -23,20 +23,21 @@ public class ZeroToHeroReactiveWebApplication {
 		SpringApplication.run(ZeroToHeroReactiveWebApplication.class, args);
 	}
 
-	@EventListener(value = { ApplicationReadyEvent.class })
+	// @EventListener(value = { ApplicationReadyEvent.class })
 	public void go() {
-		var names=Flux.just("Shiva","Dasari","Ravi","Satish")
-				.map(name->UserProfile.builder().userId(null).firstName(name).build())
-				.flatMap(userProfileRepository::save)
-				.thenMany(userProfileRepository.findAll())
-				.subscribe(log::info);
-		
-		
+		/*
+		 * var names=Flux.just("Shiva","Dasari","Ravi","Satish")
+		 * .map(name->UserProfile.builder().userId(null).firstName(name).build())
+		 * .flatMap(userProfileRepository::save)
+		 * .thenMany(userProfileRepository.findAll())
+		 * .subscribe(log::info);
+		 */
+
 		/*
 		 * userProfileRepository.deleteAll() .thenMany(names)
 		 * .thenMany(userProfileRepository.findAll()) .subscribe(log::info);
 		 */
-		
+
 	}
 
 }

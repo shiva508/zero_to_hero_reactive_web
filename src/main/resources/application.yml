@@ -3,7 +3,7 @@ spring:
     url: r2dbc:pool:mysql://localhost:3306/1234
     username: root
     password: root
-    
+
   application:
     name: zero_to_hero_reactive_web
   jpa:
