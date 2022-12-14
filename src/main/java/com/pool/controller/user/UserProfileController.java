@@ -44,7 +44,10 @@ public class UserProfileController {
 
 	@GetMapping("/downloadFile")
 	public ResponseEntity<Mono<Resource>> downloadFile() throws IOException {
-
+		profileService.downloadFile().subscribe(data -> System.out.println(data), error -> System.out.println(error),
+				() -> System.out
+						.println("processing completed"));
+						profileService.downloadFile().filter(null);
 		return ResponseEntity.ok()
 				.contentType(MediaType.parseMediaType(
 						"application/octet-stream"))
