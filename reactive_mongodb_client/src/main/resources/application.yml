@@ -1,0 +1,21 @@
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      username: root
+      database: user_db
+      password: rootpassword
+      port: "27017"
+      host: localhost
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - openapi
+          - swagger-ui
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    path: /swagger-ui.html

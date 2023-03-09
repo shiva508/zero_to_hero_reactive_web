@@ -20,6 +20,7 @@
 		<module>reactive_r2dbc_mysql_client</module>
 		<module>reactive_web_basic</module>
         <module>reactive_java_basic</module>
+        <module>reactive_mongodb_client</module>
     </modules>
 	<properties>
 		<java.version>17</java.version>
