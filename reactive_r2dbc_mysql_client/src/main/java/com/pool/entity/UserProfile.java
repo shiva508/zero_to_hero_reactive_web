@@ -1,8 +1,10 @@
 package com.pool.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -13,10 +15,12 @@ import lombok.Data;
 
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Table(name = "tbl_user_profile")
 public class UserProfile implements Serializable {
+	@Serial
 	private static final long serialVersionUID = 7823610699711947019L;
 
 	@Id
@@ -44,4 +48,6 @@ public class UserProfile implements Serializable {
 	@Column("UPDATED_AT")
 	private LocalDateTime updatedAt;
 
+	@Column("BALANCE")
+	private Integer balance;
 }

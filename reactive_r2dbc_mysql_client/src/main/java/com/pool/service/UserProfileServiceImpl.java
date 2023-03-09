@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.pool.mapper.UserMapper;
+import com.pool.model.UserModel;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -26,15 +28,24 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	private final UserProfileRepository userProfileRepository;
 
+	private final UserMapper userMapper;
+
 	@Override
-	public Mono<UserProfile> save(UserProfile userProfile) {
-		return userProfileRepository.save(userProfile);
+	public Mono<UserModel> save(Mono<UserModel> userModel) {
+
+		return userModel.map(userMapper::userModelToEntity)
+				.flatMap(userProfileRepository::save)
+				.map(userMapper::userEntityToModel);
 	}
 
 	@Override
-	public Mono<UserProfile> update(UserProfile userProfile) {
+	public Mono<UserModel> update(Long userId,Mono<UserModel> userModel) {
 
-		return userProfileRepository.save(userProfile);
+		return userProfileRepository.findById(userId)
+				.flatMap(userProfile -> userModel.map(userMapper::userModelToEntity)
+						.doOnNext(userProfile1 -> userProfile1.setUserId(userId)))
+				.flatMap(userProfileRepository::save)
+				.map(userMapper::userEntityToModel);
 	}
 
 	@Override
@@ -43,8 +54,14 @@ public class UserProfileServiceImpl implements UserProfileService {
 	}
 
 	@Override
-	public Flux<UserProfile> all() {
-		return userProfileRepository.findAll();
+	public Flux<UserModel> all() {
+
+		return userProfileRepository.findAll().map(userMapper::userEntityToModel);
+	}
+
+	@Override
+	public Mono<UserModel> findByUserId(Long userId) {
+		return userProfileRepository.findById(userId).map(userMapper::userEntityToModel);
 	}
 
 	@Override
