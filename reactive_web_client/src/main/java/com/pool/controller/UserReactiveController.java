@@ -2,49 +2,46 @@ package com.pool.controller;
 
 import com.pool.entity.UserEntity;
 import com.pool.model.Input;
-import com.pool.service.UserReactiveService;
-import com.pool.service.UserService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/reapi")
+@RequestMapping("/web/api")
 public class UserReactiveController {
-    private final UserReactiveService userReactiveService;
+    private final WebClient reactiveWebClient;
 
-    public UserReactiveController(UserReactiveService userReactiveService) {
-        this.userReactiveService = userReactiveService;
+
+    public UserReactiveController(WebClient reactiveWebClient) {
+        this.reactiveWebClient = reactiveWebClient;
     }
 
     @GetMapping("byname/{name}")
     public Mono<UserEntity> getUserEntityByName(@PathVariable String name){
-        return userReactiveService.getUserByName(name);
+        return reactiveWebClient.get().uri("/reapi/byname/{name}",name)
+                .retrieve()
+                .bodyToMono(UserEntity.class);
     }
 
     @GetMapping("all")
     public Flux<UserEntity> getAllUserEntity(){
-        return userReactiveService.getAllUsers();
+        return null;
     }
 
     @GetMapping(value = "reall",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<UserEntity> getAllUserEntityReactive(){
-        return userReactiveService.getAllUsers();
+        return null;
     }
 
     @PostMapping("/createUser")
     public Mono<UserEntity> createUser(@RequestBody Mono<Input> inputMono,
                                        @RequestHeader Map<String,String> headers){
         System.out.println(headers);
-        return userReactiveService.getCreateUser(inputMono);
-    }
 
-    @GetMapping("search")
-    public Mono<UserEntity> getUserEntityByNameQueryParan(@RequestParam("name") String name){
-        return userReactiveService.getUserByName(name);
+        return null;
     }
 }
