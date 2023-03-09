@@ -19,7 +19,8 @@
 		<module>reactive_web_client</module>
 		<module>reactive_r2dbc_mysql_client</module>
 		<module>reactive_web_basic</module>
-	</modules>
+        <module>reactive_java_basic</module>
+    </modules>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
