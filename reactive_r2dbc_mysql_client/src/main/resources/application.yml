@@ -1,3 +1,5 @@
+server:
+  port: 8090
 spring:
   r2dbc:
     url: r2dbc:pool:mysql://localhost:3306/1234
@@ -5,7 +7,7 @@ spring:
     password: root
 
   application:
-    name: zero_to_hero_reactive_web
+    name: reactive_r2dbc_mysql_client
   jpa:
     hibernate:
       ddl-auto: update
