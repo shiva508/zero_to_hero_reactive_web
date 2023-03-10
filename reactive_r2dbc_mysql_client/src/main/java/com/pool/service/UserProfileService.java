@@ -2,9 +2,6 @@ package com.pool.service;
 
 import com.pool.model.UserModel;
 import org.springframework.core.io.Resource;
-
-import com.pool.entity.UserProfile;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

@@ -8,16 +8,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import com.pool.mapper.UserMapper;
 import com.pool.model.UserModel;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-
-import com.pool.entity.UserProfile;
 import com.pool.repository.UserProfileRepository;
-
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
