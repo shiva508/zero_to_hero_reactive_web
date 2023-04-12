@@ -10,16 +10,16 @@ import reactor.core.publisher.SynchronousSink;
 public class OperatorsHandleClient {
     public static void main(String[] args) {
 
-        BiConsumer<Integer, SynchronousSink> biConsumer = (t, synchronousSink) -> {
+        BiConsumer<Integer, SynchronousSink<Integer>> biConsumer = (t, synchronousSink) -> {
             if (t == 10) {
                 synchronousSink.complete();
             } else {
                 synchronousSink.next(t);
             }
         };
-        Flux.range(1, 20).handle(biConsumer::accept).subscribe(Util.subscriber());
-        BiConsumer<String, SynchronousSink> countryConsumer = (countryName, synchronousSink) -> {
-            if (countryName.toLowerCase().equals("canada")) {
+        Flux.range(1, 20).handle(biConsumer).subscribe(Util.subscriber());
+        BiConsumer<String, SynchronousSink<String>> countryConsumer = (countryName, synchronousSink) -> {
+            if (countryName.equalsIgnoreCase("canada")) {
                 synchronousSink.complete();
             } else {
                 synchronousSink.next(countryName);
@@ -27,7 +27,7 @@ public class OperatorsHandleClient {
         };
         Flux.generate(synchronousSink -> synchronousSink.next(Util.fakerInstance().country().name()))
                 .map(Object::toString)
-                .handle(countryConsumer::accept).subscribe(Util.subscriber());
+                .handle(countryConsumer).subscribe(Util.subscriber());
     }
 
 }
