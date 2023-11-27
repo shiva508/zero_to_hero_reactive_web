@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import org.reactivestreams.Subscriber;
 
 import com.github.javafaker.Faker;
-import com.pool.reactive.flux.emmitingitem.CustomSubscriber;
+import com.pool.basics.flux.emmitingitem.CustomSubscriber;
 
 import reactor.core.publisher.Flux;
 
