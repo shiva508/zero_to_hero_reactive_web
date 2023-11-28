@@ -1,0 +1,7 @@
+## Different ways to Connect to S3
+### To perform operations on S3 objects using the library, there are the following approaches available:
+
+### S3Client: The S3Client provides a low-level API for interacting with AWS S3 services. It allows us to directly call methods to create buckets, upload objects, download objects, delete objects, list objects, and perform other S3 operations. By using S3Client, you have fine-grained control over the S3 operations. However, it requires more manual handling of the request and response objects.
+### CrossRegionS3Client: The implementation of S3Client provided in the AWS SDK is specific to a particular region. This means that it can only be used to perform operations on buckets and objects stored in that specific region. To address this limitation, Spring Cloud AWS introduces a CrossRegionS3Client, which solves the problem by maintaining an internal dictionary of S3Client objects for each region.
+### S3Template: The third approach is to use S3Template, which is a higher-level abstraction provided by Spring Cloud AWS 3.x. The S3Template builds on top of the S3Client and offers a more streamlined and simplified API for working with S3.
+### http://s3.localhost.localstack.cloud:4566/
