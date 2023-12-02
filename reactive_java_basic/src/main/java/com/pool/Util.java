@@ -25,7 +25,7 @@ public class Util {
         try {
             Thread.sleep(milli);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
