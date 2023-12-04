@@ -18,7 +18,6 @@ public class VideoStreamingService {
     private ResourceLoader resourceLoader;
 
     public Mono<Resource> initiateVideoStreaming(String title) {
-        System.out.println(videoPath);
         return Mono.fromSupplier(() -> this.resourceLoader.getResource(String.format(videoPath, title)));
     }
 }

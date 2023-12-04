@@ -4,14 +4,22 @@ import com.comrade.model.S3BucketDetails;
 import com.comrade.model.S3BucketResponse;
 import com.comrade.model.S3FileDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import software.amazon.awssdk.core.async.AsyncResponseTransformer;
+import software.amazon.awssdk.core.async.ResponsePublisher;
+import software.amazon.awssdk.core.async.SdkPublisher;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 @Service
@@ -20,8 +28,12 @@ public class S3ClientService {
 
     private final S3Client s3ClientEndpointBased;
 
-    public S3ClientService(@Qualifier("s3ClientEndpointBased") S3Client s3ClientEndpointBased) {
+    private final S3AsyncClient s3AsyncClientEndpointBased;
+
+    public S3ClientService(@Qualifier("s3ClientEndpointBased") S3Client s3ClientEndpointBased,
+                           @Qualifier("s3AsyncClientEndpointBased") S3AsyncClient s3AsyncClientEndpointBased) {
         this.s3ClientEndpointBased = s3ClientEndpointBased;
+        this.s3AsyncClientEndpointBased = s3AsyncClientEndpointBased;
     }
 
     public S3BucketResponse createBucket(String bucketName){
@@ -72,6 +84,34 @@ public class S3ClientService {
         ListObjectsResponse listObjectsResponse = s3ClientEndpointBased.listObjects(listObjects);
         List<S3Object> s3Objects = listObjectsResponse.contents();
         return s3Objects.stream().map(s3Object -> S3FileDetails.builder().name(s3Object.key()).size(s3Object.size()).owner(s3Object.owner().displayName()).build()).toList();
+    }
+
+    public Flux<ByteBuffer> downloadFile(String key, String bucketName){
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                                                            .key(key)
+                                                            .bucket(bucketName)
+                                                            .build();
+        return Mono.fromFuture(s3AsyncClientEndpointBased.getObject(getObjectRequest, AsyncResponseTransformer.toPublisher()))
+                   .flatMapMany(getObjectResponseResponsePublisher -> getObjectResponseResponsePublisher);
+        /*return Mono.fromFuture(s3AsyncClientEndpointBased.getObject(getObjectRequest, AsyncResponseTransformer.toPublisher()))
+                   .flatMapMany(this::transformData);*/
+
+    }
+
+    private Publisher<? extends ByteBuffer> transformData(ResponsePublisher<GetObjectResponse> getObjectResponseResponsePublisher) {
+        return getObjectResponseResponsePublisher;
+    }
+
+    public Flux<byte[]> downloadFileAsByteArray(String key, String bucketName){
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                                                            .key(key)
+                                                            .bucket(bucketName)
+                                                            .build();
+        return Mono.fromFuture(s3AsyncClientEndpointBased.getObject(getObjectRequest, AsyncResponseTransformer.toPublisher()))
+                   .flatMapMany(this::byteBufferToByteArrayTransformer);
+    }
+    private Publisher<? extends byte[]> byteBufferToByteArrayTransformer(ResponsePublisher<GetObjectResponse> getObjectResponseResponsePublisher) {
+        return getObjectResponseResponsePublisher.map(ByteBuffer::array);
     }
 
 }

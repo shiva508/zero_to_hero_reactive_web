@@ -19,7 +19,7 @@ public class BackpressureBufferClient {
         })
                 .onBackpressureBuffer()
                 .publishOn(Schedulers.boundedElastic())
-                .doOnNext(num -> Util.threadSleep(10))
+                .doOnNext(num -> Util.threadSleep(1000))
                 .subscribe(Util.subscriber());
         Util.threadSleep(10000);
 
