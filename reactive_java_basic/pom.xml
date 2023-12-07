@@ -30,7 +30,7 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>3.4.0</version>
+            <version>3.6.0</version>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
@@ -63,7 +63,6 @@
                     <release>17</release>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>

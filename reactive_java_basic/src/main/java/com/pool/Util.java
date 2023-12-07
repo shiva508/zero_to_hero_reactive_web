@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux;
 
 public class Util {
     public static final Faker FAKER = Faker.instance();
-    public static Consumer<Object> onNext = obj -> System.out.println("Recevied:" + obj);
+    public static Consumer<Object> onNext = obj -> System.out.println("Received:" + obj);
     public static Consumer<Throwable> onError = err -> System.out.println("Error:" + err.getMessage());
     public static Runnable onComplete = () -> System.out.println("Completed");
 

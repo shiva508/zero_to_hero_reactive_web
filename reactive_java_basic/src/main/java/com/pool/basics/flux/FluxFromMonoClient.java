@@ -10,6 +10,5 @@ public class FluxFromMonoClient {
         Mono<String> mono = Mono.just("A");
         Flux<String> flux = Flux.from(mono);
         flux.subscribe(Util.onNext);
-
     }
 }

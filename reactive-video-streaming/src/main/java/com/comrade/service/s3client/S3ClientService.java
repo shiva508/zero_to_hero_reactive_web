@@ -18,9 +18,12 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @Slf4j
@@ -107,8 +110,35 @@ public class S3ClientService {
                                                             .key(key)
                                                             .bucket(bucketName)
                                                             .build();
+//        downloadFileAsByteArrayNew(key,bucketName);
         return Mono.fromFuture(s3AsyncClientEndpointBased.getObject(getObjectRequest, AsyncResponseTransformer.toPublisher()))
                    .flatMapMany(this::byteBufferToByteArrayTransformer);
+
+    }
+    public void downloadFileAsByteArrayNew(String key, String bucketName){
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                                                            .key(key)
+                                                            .bucket(bucketName)
+                                                            .build();
+         Mono.fromFuture(s3AsyncClientEndpointBased.getObject(getObjectRequest, AsyncResponseTransformer.toPublisher()))
+                .subscribe(getObjectResponseResponsePublisher ->{
+                    SdkPublisher<byte[]> map = getObjectResponseResponsePublisher.map(ByteBuffer::array);
+                    map.subscribe(bytes -> {
+                        System.out.println("======================");
+                        FileOutputStream out = null;
+                        try {
+                            out = new FileOutputStream("/home/shiva/shiva/backend/zero_to_hero_reactive_web/reactive-video-streaming/video"+new Random().nextInt(1,1000) +".mp4");
+                            System.out.println(bytes);
+                            out.write(bytes);
+                            out.close();
+                        } catch (FileNotFoundException e) {
+                            throw new RuntimeException(e);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                });
+
     }
     private Publisher<? extends byte[]> byteBufferToByteArrayTransformer(ResponsePublisher<GetObjectResponse> getObjectResponseResponsePublisher) {
         return getObjectResponseResponsePublisher.map(ByteBuffer::array);

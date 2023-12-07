@@ -33,7 +33,7 @@ public class BookClient {
 
     public static RevenueReport revenueReportData(List<BookOrder> booksOrder) {
         Map<String, Double> data = booksOrder.stream()
-                .collect(Collectors.groupingBy(BookOrder::getCategory, Collectors.summingDouble(BookOrder::getPrice)));
+                                             .collect(Collectors.groupingBy(BookOrder::getCategory, Collectors.summingDouble(BookOrder::getPrice)));
         return new RevenueReport(data);
     }
 

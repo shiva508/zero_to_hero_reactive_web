@@ -14,9 +14,9 @@ public class RetryClient {
 
     public static Flux<Integer> numberStream() {
         return Flux.range(0, 9)
-                .doOnSubscribe(num -> System.out.println("Subscribed"))
-                .doOnComplete(() -> System.out.println("**Completed"))
-                .map(num -> num / (Util.fakerInstance().random().nextInt(1, 5) > 3 ? 0 : 1))
-                .doOnError(err -> System.out.println("Error Occcured"));
+                   .doOnSubscribe(num -> System.out.println("Subscribed"))
+                   .doOnComplete(() -> System.out.println("**Completed"))
+                   .map(num -> num / (Util.fakerInstance().random().nextInt(1, 5) > 3 ? 0 : 1))
+                   .doOnError(err -> System.out.println("Error Occcured"));
     }
 }

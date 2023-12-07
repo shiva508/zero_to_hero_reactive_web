@@ -26,7 +26,7 @@ public class ProjectIsqnProcessor {
         Flux.fromIterable(isqnDatas)
                 .collectMultimap(IsqnData::getDirection, IsqnData::getIsqnid)
                 .map(ProjectIsqnProcessor::processData)
-                .doOnNext(jus -> jus.collectList())
+                .doOnNext(Flux::collectList)
                 .subscribe(Util.subscriber());
     }
 
