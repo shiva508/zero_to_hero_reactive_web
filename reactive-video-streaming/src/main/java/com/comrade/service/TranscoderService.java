@@ -1,5 +1,6 @@
 package com.comrade.service;
 
+import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.javacv.*;
 import org.bytedeco.ffmpeg.avcodec.*;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.Buffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TranscoderService {
@@ -23,11 +26,13 @@ public class TranscoderService {
             String channelTwo = "/home/shiva/Downloads/2-1.mp3";
             ByteArrayOutputStream leftOutputStream = new ByteArrayOutputStream();
             ByteArrayOutputStream rightOutputStream = new ByteArrayOutputStream();
+            double silentThreshold = 0.1;
             //grabber from input
             FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(inputStream);
             System.out.println(grabber.getAudioChannels());
             grabber.setAudioChannels(2);
-            grabber.setAudioCodec(avcodec.);
+            grabber.setAudioCodec(avcodec.AV_CODEC_ID_PCM_S16LE);
+            grabber.setSampleRate(44100);
             grabber.start();
             //two recorders for two channels
             FFmpegFrameRecorder leftRecorder = new FFmpegFrameRecorder(channelOne, grabber.getImageWidth(), grabber.getImageHeight(), 1);
@@ -35,10 +40,55 @@ public class TranscoderService {
             leftRecorder.setAudioChannels(1);
             leftRecorder.setFormat("mp3");
             leftRecorder.start();
+
             FFmpegFrameRecorder rightRecorder = new FFmpegFrameRecorder(channelTwo, grabber.getImageWidth(), grabber.getImageHeight(), 1);
             rightRecorder.setSampleRate(grabber.getSampleRate());
             rightRecorder.setFormat("mp3");
             rightRecorder.start();
+
+            List<Long> silenceMarker = new ArrayList<>();
+            long startTime = 0;
+            long endTime = 0;
+            boolean inSilence = false;
+
+            while (true){
+                Frame frame = grabber.grab();
+                if (frame == null){
+                    break;
+                }
+                ShortBuffer audioSample = (ShortBuffer) frame.samples[0];
+                ShortBuffer leftAudioSample = ShortBuffer.allocate(audioSample.limit()/2);
+                ShortBuffer rightAudioSample = ShortBuffer.allocate(audioSample.limit()/2);
+                for (int i = 0; i < audioSample.limit(); i+=2) {
+                    leftAudioSample.put(audioSample.get(i));
+                    rightAudioSample.put(audioSample.get(i+1));
+                }
+                leftAudioSample.flip();
+                rightAudioSample.flip();
+
+                Frame leftFrame = new Frame();
+                Frame rightFrame = new Frame();
+
+                leftFrame.samples = new Buffer[]{leftAudioSample};
+                rightFrame.samples = new Buffer[]{rightAudioSample};
+
+                leftRecorder.record(leftFrame);
+                rightRecorder.record(rightFrame);
+
+                double rms = rmsCalculation(audioSample);
+
+                if(rms < silentThreshold){
+                    if (!inSilence){
+                        inSilence = true;
+                        startTime = frame.timestamp;
+                    }
+                    endTime = frame.timestamp + frame.samples[0].limit()/2* 100000/32223;
+                }else {
+                    inSilence = false;
+                    silenceMarker.add(startTime);
+                    silenceMarker.add(endTime);
+                }
+            }
 
             Frame frame = null;
             while ((frame = grabber.grabSamples()) != null) {
@@ -80,6 +130,16 @@ public class TranscoderService {
             throw new RuntimeException(e);
         }
     }
+
+    public double rmsCalculation(ShortBuffer audioSample) {
+        double sum = 0;
+        while (audioSample.hasRemaining()){
+            double value = (double) audioSample.get() /32768;
+            sum += value* value;
+        }
+        return Math.sqrt(sum/audioSample.limit());
+    }
+
     public static void mergeAudio(String inputLeft, String inputRight, String output) {
 
         try {
