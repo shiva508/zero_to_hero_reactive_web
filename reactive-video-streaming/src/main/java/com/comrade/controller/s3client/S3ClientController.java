@@ -3,6 +3,7 @@ package com.comrade.controller.s3client;
 import com.comrade.model.S3BucketResponse;
 import com.comrade.model.S3BucketDetails;
 import com.comrade.model.S3FileDetails;
+import com.comrade.service.TranscoderService;
 import com.comrade.service.s3client.S3ClientService;
 import com.comrade.util.Util;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,8 @@ import java.util.List;
 public class S3ClientController {
 
     private final S3ClientService s3ClientService;
+
+    private final TranscoderService transcoderService;
 
     @GetMapping("/createBucket/{bucketName}")
     public S3BucketResponse createBucket(@PathVariable("bucketName") String bucketName){
@@ -68,4 +71,10 @@ public class S3ClientController {
                .publishOn(Schedulers.boundedElastic())
                .doOnNext(num -> Util.threadSleep(1000));
     }
+
+    @GetMapping("/split")
+    public void  split(){
+        transcoderService.split();
+    }
+
 }
